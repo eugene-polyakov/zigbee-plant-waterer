@@ -114,7 +114,6 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
             if (message->attribute.id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL) {
                 bool light_state = message->attribute.data.value ? *(bool *)message->attribute.data.value : false;
                 set_relay_state(light_state);
-                esp_app_water_consumption_handler(10);
             }
         }
     }
