@@ -2,8 +2,8 @@
 #include "soc/adc_channel.h"
 
 #define RELAY_PIN GPIO_NUM_4
-#define RELAY_ON_TIME_S 5
-#define RELAY_MIN_TIME_BETWEEN_CYCLES_M 5
+#define RELAY_ON_TIME_S 10
+#define RELAY_MIN_TIME_BETWEEN_CYCLES_M 3
 
 #define SENSOR_POWER_PIN GPIO_NUM_0
 

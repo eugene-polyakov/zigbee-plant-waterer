@@ -19,12 +19,12 @@ static void bdb_start_top_level_commissioning_cb(uint8_t mode_mask)
     ESP_ERROR_CHECK(esp_zb_bdb_start_top_level_commissioning(mode_mask));
 }
 
-static void esp_app_water_consumption_handler(float value) {
-    int16_t measured_value = (int16_t)value;
+static void esp_app_water_consumption_handler(uint16_t value) {
     esp_zb_lock_acquire(portMAX_DELAY);
+    ESP_LOGI(TAG, "Reporting water consumption - %d cycles", value);
     esp_zb_zcl_set_attribute_val(HA_CONSUMPTION_SENSOR_ENDPOINT,
         ESP_ZB_ZCL_CLUSTER_ID_TEMP_MEASUREMENT, ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
-        ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID, &measured_value, false);
+        ESP_ZB_ZCL_ATTR_TEMP_MEASUREMENT_VALUE_ID, &value, false);
     esp_zb_lock_release();
 }
 
@@ -114,6 +114,7 @@ static esp_err_t zb_attribute_handler(const esp_zb_zcl_set_attr_value_message_t 
             if (message->attribute.id == ESP_ZB_ZCL_ATTR_ON_OFF_ON_OFF_ID && message->attribute.data.type == ESP_ZB_ZCL_ATTR_TYPE_BOOL) {
                 bool light_state = message->attribute.data.value ? *(bool *)message->attribute.data.value : false;
                 set_relay_state(light_state);
+                esp_app_water_consumption_handler(10);
             }
         }
     }
@@ -249,7 +250,7 @@ static void esp_zb_task(void *pvParameters)
     esp_zb_endpoint_config_t consumpton_endpoint_config = {
         .endpoint = HA_CONSUMPTION_SENSOR_ENDPOINT,
         .app_profile_id = ESP_ZB_AF_HA_PROFILE_ID,
-        .app_device_id = ESP_ZB_HA_SIMPLE_SENSOR_DEVICE_ID,
+        .app_device_id = ESP_ZB_ZGP_TEMPERATURE_SENSOR_DEV_ID,
         .app_device_version = 0
     };
     esp_zb_ep_list_add_ep(zb_endpoints, custom_consumption_clusters_create(), consumpton_endpoint_config);
@@ -264,40 +265,6 @@ static void esp_zb_task(void *pvParameters)
     esp_zb_ep_list_add_ep(zb_endpoints, custom_humidity_target_clusters_create(), target_endpoint_config);
 
     esp_zb_device_register(zb_endpoints);
-
-    // for (int i = 0; i < SENSOR_COUNT; i++) {
-    //     esp_zb_zcl_reporting_info_t reporting_info = {
-    //     .direction = ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV,
-    //     .ep = meas_endpoints[i],
-    //     .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_REL_HUMIDITY_MEASUREMENT,
-    //     .cluster_role = ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
-    //     .dst.profile_id = ESP_ZB_AF_HA_PROFILE_ID,
-    //     .u.send_info.min_interval = 1,
-    //     .u.send_info.max_interval = 0,
-    //     .u.send_info.def_min_interval = 1,
-    //     .u.send_info.def_max_interval = 0,
-    //     .u.send_info.delta.u16 = 100,
-    //     .attr_id = ESP_ZB_ZCL_ATTR_REL_HUMIDITY_MEASUREMENT_VALUE_ID,
-    //     .manuf_code = ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC,
-    //     };
-    //     esp_zb_zcl_update_reporting_info(&reporting_info);
-    // };
-
-    //  esp_zb_zcl_reporting_info_t reporting_info = {
-    //     .direction = ESP_ZB_ZCL_CMD_DIRECTION_TO_SRV,
-    //     .ep = HA_CONSUMPTION_SENSOR_ENDPOINT,
-    //     .cluster_id = ESP_ZB_ZCL_CLUSTER_ID_ANALOG_INPUT,
-    //     .cluster_role = ESP_ZB_ZCL_CLUSTER_SERVER_ROLE,
-    //     .dst.profile_id = ESP_ZB_AF_HA_PROFILE_ID,
-    //     .u.send_info.min_interval = 1,
-    //     .u.send_info.max_interval = 0,
-    //     .u.send_info.def_min_interval = 1,
-    //     .u.send_info.def_max_interval = 0,
-    //     .u.send_info.delta.u16 = 100,
-    //     .attr_id = ESP_ZB_ZCL_ATTR_ANALOG_INPUT_PRESENT_VALUE_ID,
-    //     .manuf_code = ESP_ZB_ZCL_ATTR_NON_MANUFACTURER_SPECIFIC,
-    //     };
-    // esp_zb_zcl_update_reporting_info(&reporting_info);
 
     esp_zb_core_action_handler_register(zb_action_handler);
     esp_zb_set_primary_network_channel_set(ESP_ZB_PRIMARY_CHANNEL_MASK);

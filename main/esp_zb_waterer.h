@@ -15,14 +15,14 @@
 #define ESP_ZB_PRIMARY_CHANNEL_MASK     ESP_ZB_TRANSCEIVER_ALL_CHANNELS_MASK    /* Zigbee primary channel mask use in the example */
 
 
-#define MEASUREMENT_INTERVAL_S 5
+#define MEASUREMENT_INTERVAL_S 20*60 // 20 minutes
 
 #define EXPOSE_RELAY_INPUT 
 
 #define ESP_TEMP_SENSOR_UPDATE_INTERVAL (1)
 
-#define MANUFACTURER_NAME               "\x0B""EP"
-#define MODEL_IDENTIFIER                "\x09""GRAVE_PISSER"
+#define MANUFACTURER_NAME               "\x02""EP"
+#define MODEL_IDENTIFIER                "\x0E""GRAVE_PISSER"
 
 #define ESP_ZB_ZED_CONFIG()                                         \
     {                                                               \

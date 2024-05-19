@@ -10,7 +10,7 @@ bool calibration_enabled = true;
 adc_cali_handle_t calibration_handles[] = {0, 0, 0}; // seems like an overkill, one calibration func should be plenty
 static int target_min_humidity = DEFAULT_MIN_HUMIDITY;
 static float minutes_since_last_pump = 0.0f;
-static uint32_t water_consumption_s = 0;
+static uint16_t water_consumption_cycles = 0;
 
 #define ATTN ADC_ATTEN_DB_12
 
@@ -105,9 +105,8 @@ static void measure_task(void *pvParameters) {
             vTaskDelay(pdMS_TO_TICKS(RELAY_ON_TIME_S * 1000));
             ESP_LOGI(TAG, "Turning pump off");
             set_relay_state(false);
-            water_consumption_s += RELAY_ON_TIME_S;
-            ESP_LOGI(TAG, "Reporting consumption - %lu seconds", water_consumption_s);
-            esp_water_consumption_callback_t(water_consumption_s);
+            water_consumption_cycles += 1; // RELAY_ON_TIME_S;
+            consumption_ptr(water_consumption_cycles);
             minutes_since_last_pump = 0;
         } 
         
