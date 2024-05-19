@@ -1,0 +1,28 @@
+{
+  "C_Cpp.intelliSenseEngine": "default",
+  "idf.adapterTargetName": "esp32h2",
+  "idf.openOcdConfigs": [
+    "interface/esp_usb_bridge.cfg",
+    "board/esp32h2-bridge.cfg"
+  ],
+  "idf.flashType": "UART",
+  "files.associations": {
+    "esp_zigbee_type.h": "c",
+    "esp_zigbee_core.h": "c",
+    "esp_check.h": "c",
+    "gpio.h": "c",
+    "esp_log.h": "c",
+    "gpio_hal.h": "c",
+    "esp_rom_gpio.h": "c",
+    "esp_gpio_reserve.h": "c",
+    "gpio_periph.h": "c",
+    "periph_defs.h": "c",
+    "rtc_io.h": "c",
+    "task.h": "c",
+    "freertos.h": "c",
+    "adc_oneshot.h": "c",
+    "adc_types.h": "c",
+    "adc_hal_common.h": "c"
+  },
+  "idf.port": "/dev/cu.wchusbserial579B0255931"
+}
